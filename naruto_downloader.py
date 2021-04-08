@@ -6,7 +6,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 import time
 import requests
-
+import get_episode_link
 start_ep = int(input('Enter the start episode number:')) # Get the start of episode
 end_ep = int(input('Enter the end episode number:')) # Get the end of episode
 
@@ -14,9 +14,10 @@ options = Options()
 options.binary_location = 'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe' # Use chrome driver with brave browser
 driver = webdriver.Chrome(ChromeDriverManager().install(), options = options)
 
+episode_links = get_episode_link.get_episode_link()
 for episode in range(start_ep,end_ep+1):
-    print('At the start of the loop')
-    url = 'https://kissanimes.su/ep/naruto-shippuuden-dub-episode-' + str(episode) + '/288068/' # URL of the website from where we are downloading the episodes
+    #url = 'https://kissanimes.su/ep/naruto-shippuuden-dub-episode-' + str(episode) + '/288068/' # URL of the website from where we are downloading the episodes
+    url = 'https://kissanimes.su'+episode_links[str(episode)].strip() # URL of the website from where we are downloading the episodes
     driver.get(url)
 
     video_xpath = '//*[@id="load_anime"]/div/div/iframe' # XPath of the video on the main page
@@ -43,10 +44,9 @@ for episode in range(start_ep,end_ep+1):
             driver.switch_to.window(driver.window_handles[tab])  # Will close the last tab first.
             driver.close()
         driver.switch_to.window(driver.window_handles[0])  # Switching the driver focus to first tab.
-
-    action.move_to_element_with_offset(driver.find_element_by_xpath(play_button), 5, 5)
-    action.click() # Clicks on a point around the play button to trigger the request to get the video URL
-    action.perform()
+        action.move_to_element_with_offset(driver.find_element_by_xpath(play_button), 5, 5)
+        action.click() # Clicks on a point around the play button to trigger the request to get the video URL
+        action.perform()
     time.sleep(2)
 
     video_file = '//*[@id="myVideo"]/div[2]/div[4]/video' # XPath for the element that contains the video URL
