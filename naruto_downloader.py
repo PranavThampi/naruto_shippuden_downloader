@@ -3,20 +3,21 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
 import time
 import requests
 import get_episode_link
 start_ep = int(input('Enter the start episode number:')) # Get the start of episode
 end_ep = int(input('Enter the end episode number:')) # Get the end of episode
 
-options = Options()
-options.binary_location = 'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe' # Use chrome driver with brave browser
-driver = webdriver.Chrome(ChromeDriverManager().install(), options = options)
+try:
+    chromedriver = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chromedriver"
+    driver = webdriver.Chrome(chromedriver)
+
+except Exception as e:
+    driver = webdriver.Chrome(ChromeDriverManager().install())
 
 episode_links = get_episode_link.get_episode_link()
 for episode in range(start_ep,end_ep+1):
-    #url = 'https://kissanimes.su/ep/naruto-shippuuden-dub-episode-' + str(episode) + '/288068/' # URL of the website from where we are downloading the episodes
     url = 'https://kissanimes.su'+episode_links[str(episode)].strip() # URL of the website from where we are downloading the episodes
     driver.get(url)
 
@@ -52,9 +53,10 @@ for episode in range(start_ep,end_ep+1):
     video_file = '//*[@id="myVideo"]/div[2]/div[4]/video' # XPath for the element that contains the video URL
     video_link = driver.find_element_by_xpath(video_file).get_attribute('src')
     video_file = requests.get(video_link).content
-    print('Getting the link to download')
+    print('Got the Download Link')
     with open(path+'episode_'+str(episode)+'.mp4', 'wb') as handler:
         print('Downloading episode ',str(episode))
         handler.write(video_file) # Saves the file to the path specified
         print('Downloaded episode ',str(episode))
 
+driver.close()
