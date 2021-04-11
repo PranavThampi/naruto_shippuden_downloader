@@ -6,8 +6,14 @@ from webdriver_manager.chrome import ChromeDriverManager
 import time
 import requests
 import get_episode_link
-start_ep = int(input('Enter the start episode number:')) # Get the start of episode
-end_ep = int(input('Enter the end episode number:')) # Get the end of episode
+
+choice = input("Enter S for single episode download and M for multiple episode download:")
+
+if choice.upper() == 'M':
+    start_ep = int(input('Enter the start episode number:')) # Get the start of episode
+    end_ep = int(input('Enter the end episode number:')) # Get the end of episode
+else:
+    start_ep = end_ep = int(input("Enter the episode number:"))
 
 try:
     chromedriver = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chromedriver"
